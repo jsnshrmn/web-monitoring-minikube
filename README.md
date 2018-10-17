@@ -29,4 +29,4 @@ kubectl apply -f templates/processing.yaml
 ## Access it
 minikube service diffing --namespace ${NAMESPACE}
 
-# @TODO: Figure out how to exposed a properly mapped service port in minikube.
+@TODO: Figure out how to exposed a properly mapped service port in minikube.
