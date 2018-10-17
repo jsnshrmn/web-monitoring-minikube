@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+export HOSTED_ZONE=minikube
+export NAMESPACE=development
+kubectl config set-cluster $HOSTED_ZONE
+
+# Create namespace if necessary.
+if kubectl get namespaces | grep "${NAMESPACE}"
+then
+    echo "namespace \"${NAMESPACE}\" exists."
+else
+    kubectl create namespace ${NAMESPACE}
+fi
+
+
+kubectl config set-context $(kubectl config current-context) --namespace=$NAMESPACE
+
+eval $(minikube docker-env)

@@ -1,0 +1,9 @@
+[submodule "processing"]
+	path = processing
+	url = https://github.com/edgi-govdata-archiving/web-monitoring-processing.git
+[submodule "ui"]
+	path = ui
+	url = https://github.com/edgi-govdata-archiving/web-monitoring-ui.git
+[submodule "db"]
+	path = db
+	url = https://github.com/edgi-govdata-archiving/web-monitoring-db.git
