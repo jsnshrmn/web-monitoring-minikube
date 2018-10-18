@@ -27,6 +27,15 @@ You can verify that the image is in minikube's docker registry:
 kubectl apply -f templates/processing.yaml
 
 ## Access it
+
+The following will open a browser to the deployment endpoint.
+```
 minikube service diffing --namespace ${NAMESPACE}
+```
+
+The following will return the url to that same endpoint.
+```
+minikube service diffing --url --namespace ${NAMESPACE}
+```
 
 @TODO: Figure out how to exposed a properly mapped service port in minikube.

@@ -15,8 +15,9 @@ spec:
       - name: processing
         image: processing:latest
         imagePullPolicy: Never
-        ports: 
-        - containerPort: 80
+        ports:
+        - name: diffing
+          containerPort: 80
         resources:
           requests:
             memory: "256Mi"
@@ -47,5 +48,5 @@ spec:
   - name: http
     protocol: TCP
     port: 80
-    targetPort: 80
-  type: LoadBalancer
+    targetPort: diffing
+  type: NodePort
