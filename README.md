@@ -4,15 +4,24 @@ Install [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
 
 
 ## Activate your shell environment.
+
+This configures the development namespace in minikube and causes your docker builds to land in the kubernetes vm registry.
+
 ``source bin/activate``
 
-## When finished, detivate your shell environment to have docker images stored in your host-side docker registry.
+## When finished, Deactivate.
+
+
+This will allow your builds to land in your host-side docker registry again.
+
 ``source bin/deactivate``
 
 ## Work on code.
+
 Components are laid out in git submodules: db, processing, and ui.
 
 ## Build an image to be stored in minikube's docker registry.
+
 ```
 cd processing
 docker build -t processing .
