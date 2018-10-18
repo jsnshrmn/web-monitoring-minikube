@@ -38,4 +38,18 @@ The following will return the url to that same endpoint.
 minikube service diffing --url --namespace ${NAMESPACE}
 ```
 
-@TODO: Figure out how to exposed a properly mapped service port in minikube.
+For convenience, you can also a forward a deployment's ports to localhost.
+```
+kubectl port-forward deployment.apps/diffing 80:80
+```
+
+would allow you to access the diffing app at ``http://127.0.0.1``
+
+
+## Troubleshooting.
+
+While building ui, you may find that the yarn install steps error out. Yarn seems to have some sensitivity to the network conditions within kubernetes.  I found that doing a simple try loop got me through the build after a while.
+```
+time until docker build -t ui .; do echo "ERROR: build failed; retrying"; done
+```
+
