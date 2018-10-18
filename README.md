@@ -16,6 +16,13 @@ This will allow your builds to land in your host-side docker registry again.
 
 ``source bin/deactivate``
 
+
+## Copy secrets template and fill in the values.
+
+
+## Deploy secrets.
+kubectl apply -f secrets/
+
 ## Work on code.
 
 Components are laid out in git submodules: db, processing, and ui.
