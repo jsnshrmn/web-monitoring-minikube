@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: ui 
-        image: ui:latest
+        image: envirodgi/ui:latest
         imagePullPolicy: Never
         ports: 
         - name: ui
@@ -37,36 +37,36 @@ spec:
         env:
         - name: FORCE_SSL
           value: "false"
-        #- name: GOOGLE_DICTIONARY_SHEET_ID
-        #  valueFrom:
-        #    secretKeyRef:
-        #      name: ui-secrets
-        #      key: google_dictionary_sheet_id
-        #- name: GOOGLE_IMPORTANT_CHANGE_SHEET_ID
-        #  valueFrom:
-        #    secretKeyRef:
-        #      name: ui-secrets
-        #      key: google_important_change_sheet_id
-        #- name: GOOGLE_SERVICE_CLIENT_EMAIL
-        #  valueFrom:
-        #    secretKeyRef:
-        #      name: ui-secrets
-        #      key: google_service_client_email
-        #- name: GOOGLE_SHEETS_PRIVATE_KEY
-        #  valueFrom:
-        #    secretKeyRef:
-        #      name: ui-secrets
-        #      key: google_sheets_private_key
-        #- name: GOOGLE_TASK_SHEET_ID
-        #  valueFrom:
-        #    secretKeyRef:
-        #      name: ui-secrets
-        #      key:  google_task_sheet_id
-        #- name: WEB_MONITORING_DB_URL
-        #  valueFrom:
-        #    secretKeyRef:
-        #      name: ui-secrets
-        #      key:  web_monitoring_db_url
+        - name: GOOGLE_DICTIONARY_SHEET_ID
+          valueFrom:
+            secretKeyRef:
+              name: ui-secrets
+              key: google_dictionary_sheet_id
+        - name: GOOGLE_IMPORTANT_CHANGE_SHEET_ID
+          valueFrom:
+            secretKeyRef:
+              name: ui-secrets
+              key: google_important_change_sheet_id
+        - name: GOOGLE_SERVICE_CLIENT_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: ui-secrets
+              key: google_service_client_email
+        - name: GOOGLE_SHEETS_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: ui-secrets
+              key: google_sheets_private_key
+        - name: GOOGLE_TASK_SHEET_ID
+          valueFrom:
+            secretKeyRef:
+              name: ui-secrets
+              key:  google_task_sheet_id
+        - name: WEB_MONITORING_DB_URL
+          valueFrom:
+            secretKeyRef:
+              name: ui-secrets
+              key:  web_monitoring_db_url
         - name: INCREMENTAL_UPDATE
           value: "1"
 ---

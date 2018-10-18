@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: processing
-        image: processing:latest
+        image: envirodgi/processing:latest
         imagePullPolicy: Never
         ports:
         - name: diffing

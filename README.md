@@ -24,7 +24,7 @@ Components are laid out in git submodules: db, processing, and ui.
 
 ```
 cd processing
-docker build -t processing .
+docker build -t envirodgi/processing .
 cd ..
 ```
 
@@ -59,6 +59,6 @@ would allow you to access the diffing app at ``http://127.0.0.1``
 
 While building ui, you may find that the yarn install steps error out. Yarn seems to have some sensitivity to the network conditions within kubernetes.  I found that doing a simple try loop got me through the build after a while.
 ```
-time until docker build -t ui .; do echo "ERROR: build failed; retrying"; done
+time until docker build -t envirodgi/ui .; do echo "ERROR: build failed; retrying"; done
 ```
 
