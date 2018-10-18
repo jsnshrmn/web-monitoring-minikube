@@ -1,0 +1,275 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: api
+  namespace: development
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name:  rails-server
+        image: envirodgi/db-rails-server:latest
+        imagePullPolicy: Never
+        ports: 
+        - name: rails-server
+          containerPort: 3000
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1024Mi"
+            cpu: "1500m"
+        readinessProbe:
+          tcpSocket:
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 3000
+          initialDelaySeconds: 5
+        env:
+        - name: ALLOWED_ARCHIVE_HOSTS
+          value: "https://edgi-wm-versionista.s3.amazonaws.com/ https://edgi-wm-versionista.s3-us-west-2.amazonaws.com/ https://s3-us-west-2.amazonaws.com/edgi-wm-versionista/ https://edgi-versionista-archive.s3.amazonaws.com/ https://edgi-versionista-archive.s3.amazonaws.com/edgi-versionista-archive/"
+        - name: AUTO_ANNOTATION_USER
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: auto_annotation_user
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: aws_access_key_id
+        - name: AWS_ARCHIVE_BUCKET
+          value: edgi-wm-archive-staging
+        - name: AWS_REGION
+          value: us-west-2
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: aws_secret_access_key
+        - name: AWS_WORKING_BUCKET
+          value: edgi-wm-db-internal-staging
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: database_rds
+        - name: DIFFER_DEFAULT
+          value: http://diffing:80
+        # TODO: consider making this not a secret; it's used to bust caches
+        - name: CACHE_DATE_DIFFER
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: cache-date-differ
+        # TODO: consider making this not a secret
+        - name: HOST_URL
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: host_url
+        - name: LANG
+          value: en_US.UTF-8
+        - name: MAIL_SENDER
+          value: website.monitoring@envirodatagov.org
+        - name: MAX_COLLECTION_PAGE_SIZE
+          value: "1000"
+        - name: NEW_RELIC_AGENT_ENABLED
+          value: "false"
+        - name: POSTMARK_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: postmark_api_token
+        - name: RACK_ENV
+          value: production
+        - name: RAILS_ENV
+          value: production
+        - name: RAILS_LOG_TO_STDOUT
+          value: enabled
+        - name: RAILS_SERVE_STATIC_FILES
+          value: enabled
+        - name: REDIS_URL
+          value: redis://redis-master:6379
+        - name: SECRET_KEY_BASE
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: secret_key_base
+        - name: SENTRY_DSN
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: sentry_dsn
+        - name: TOKEN_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: token_private_key
+        - name: INCREMENTAL_UPDATE
+          value: "3"
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: import-worker
+  namespace: development
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: import-worker
+    spec:
+      containers:
+      - name: db-import-worker
+        image: envirodgi/db-import-worker:latest
+        imagePullPolicy: Never
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1024Mi"
+            cpu: "1500m"
+        env:
+        - name: ALLOWED_ARCHIVE_HOSTS
+          value: "https://edgi-wm-versionista.s3.amazonaws.com/ https://edgi-wm-versionista.s3-us-west-2.amazonaws.com/ https://s3-us-west-2.amazonaws.com/edgi-wm-versionista/ https://edgi-versionista-archive.s3.amazonaws.com/ https://edgi-versionista-archive.s3.amazonaws.com/edgi-versionista-archive/"
+        # Set to "true" to be safe/conservative on what kinds of diffs to try
+        # If we suddenly see the diff server going nuts, maybe uncomment this.
+        # - name: ANALYSIS_REQUIRE_MEDIA_TYPE
+        #   value: "true"
+        - name: AUTO_ANNOTATION_USER
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: auto_annotation_user
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: aws_access_key_id
+        - name: AWS_ARCHIVE_BUCKET
+          value: edgi-wm-archive-staging
+        - name: AWS_REGION
+          value: us-west-2
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: aws_secret_access_key
+        - name: AWS_WORKING_BUCKET
+          value: edgi-wm-db-internal-staging
+        - name: DATABASE_RDS
+          value: "postgres://wm_dev_user:wm_dev_password@rds:5432/web_monitoring_dev"
+        - name: DIFFER_DEFAULT
+          value: http://diffing:80
+        - name: HOST_URL
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: host_url
+        - name: LANG
+          value: en_US.UTF-8
+        - name: MAIL_SENDER
+          value: website.monitoring@envirodatagov.org
+        - name: MAX_COLLECTION_PAGE_SIZE
+          value: "1000"
+        - name: NEW_RELIC_AGENT_ENABLED
+          value: "false"
+        - name: POSTMARK_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: postmark_api_token
+        - name: RACK_ENV
+          value: development
+        - name: RAILS_ENV
+          value: development
+        - name: RAILS_LOG_TO_STDOUT
+          value: enabled
+        - name: RAILS_SERVE_STATIC_FILES
+          value: enabled
+        - name: REDIS_URL
+          value: redis://redis-master:6379
+        - name: SECRET_KEY_BASE
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: secret_key_base
+        - name: SENTRY_DSN
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: sentry_dsn
+        - name: TOKEN_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: token_private_key
+        - name: INCREMENTAL_UPDATE
+          value: "3"
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rds
+  namespace: development
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rds
+    spec:
+      containers:
+      - name: rds
+        image: library/postgres:10
+        imagePullPolicy: Always
+        ports:
+        - name: rds
+          containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: "wm_dev_user"
+        - name: POSTGRES_PASSWORD
+          value: "wm_dev_password"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rds
+  namespace: development
+spec:
+  selector:
+    app: rds
+  ports:
+  - name: rds
+    port: 5432
+    targetPort: rails-server
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: development
+spec:
+  selector:
+    app: api
+  ports:
+  - name: https
+    port: 443
+    targetPort: rails-server
+  - name: http
+    port: 80
+    targetPort: rails-server
+  type: NodePort
