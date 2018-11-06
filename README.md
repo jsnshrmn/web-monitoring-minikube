@@ -68,6 +68,19 @@ kubectl port-forward deployment.apps/diffing 80:80
 would allow you to access the diffing app at ``http://127.0.0.1``
 
 
+## Interact with a pod
+
+If you need to execute a command within a pod, get its name by running
+
+```
+kubectl get pods
+```
+
+then exec your command using kubectl exec, like:
+```
+kubectl exec -it api-bd98678dd-24fvb bundle exec rake db:setup
+```
+
 ## Troubleshooting.
 
 While building ui, you may find that the yarn install steps error out. Yarn seems to have some sensitivity to the network conditions within kubernetes.  I found that doing a simple try loop got me through the build after a while.
