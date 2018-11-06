@@ -78,7 +78,7 @@ kubectl get pods
 
 then exec your command using kubectl exec, like:
 ```
-kubectl exec -it api-bd98678dd-24fvb bundle exec rake db:setup
+kubectl exec api-bd98678dd-24fvb bundle exec rake db:setup
 ```
 
 ## Troubleshooting.
