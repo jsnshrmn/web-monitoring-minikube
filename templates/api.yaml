@@ -59,7 +59,7 @@ spec:
         - name: AWS_WORKING_BUCKET
           value: edgi-wm-db-internal-testing
         - name: DATABASE_URL
-          value: "postgres://wm_dev_user:wm_dev_password@rds:5432/web-monitoring-db_development"
+          value: "postgres://wm_dev_user:wm_dev_password@rds:5432/web_monitoring_dev"
         - name: DIFFER_DEFAULT
           value: http://diffing:80
         # TODO: consider making this not a secret; it's used to bust caches
@@ -320,6 +320,7 @@ spec:
   - name: http
     port: 80
     targetPort: rails-server
+    nodePort: 30000
   type: NodePort
 ---
 apiVersion: v1

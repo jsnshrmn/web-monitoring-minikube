@@ -35,6 +35,10 @@ spec:
             port: 3001
           initialDelaySeconds: 5
         env:
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
         - name: FORCE_SSL
           value: "false"
         - name: GOOGLE_DICTIONARY_SHEET_ID
@@ -63,7 +67,7 @@ spec:
               name: ui-secrets
               key:  google_task_sheet_id
         - name: WEB_MONITORING_DB_URL
-          value: http://api
+          value: "http://$(MY_POD_IP):30000/"
         - name: INCREMENTAL_UPDATE
           value: "1"
 ---
@@ -79,4 +83,5 @@ spec:
   - name: http
     port: 3001
     targetPort: ui
+    nodePort: 30001
   type: NodePort
