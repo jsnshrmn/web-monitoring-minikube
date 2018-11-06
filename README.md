@@ -3,6 +3,12 @@ Install [minikube](https://github.com/kubernetes/minikube) and start it.
 Install [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
 
 
+## Start minikube.
+
+If you are using something other than virtualbox, specify the VM driver, like:
+
+``minikube start --vm-driver hyperv``
+
 ## Activate your shell environment.
 
 This configures the development namespace in minikube and causes your docker builds to land in the kubernetes vm registry.
