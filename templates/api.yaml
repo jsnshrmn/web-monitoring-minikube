@@ -48,7 +48,7 @@ spec:
               name: api-secrets
               key: aws_access_key_id
         - name: AWS_ARCHIVE_BUCKET
-          value: edgi-wm-archive-staging
+          value: edgi-wm-archive-testing
         - name: AWS_REGION
           value: us-west-2
         - name: AWS_SECRET_ACCESS_KEY
@@ -57,12 +57,9 @@ spec:
               name: api-secrets
               key: aws_secret_access_key
         - name: AWS_WORKING_BUCKET
-          value: edgi-wm-db-internal-staging
+          value: edgi-wm-db-internal-testing
         - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: api-secrets
-              key: database_rds
+          value: "postgres://wm_dev_user:wm_dev_password@rds:5432/web-monitoring-db_development"
         - name: DIFFER_DEFAULT
           value: http://diffing:80
         # TODO: consider making this not a secret; it's used to bust caches
@@ -73,10 +70,7 @@ spec:
               key: cache-date-differ
         # TODO: consider making this not a secret
         - name: HOST_URL
-          valueFrom:
-            secretKeyRef:
-              name: api-secrets
-              key: host_url
+          value: http://api
         - name: LANG
           value: en_US.UTF-8
         - name: MAIL_SENDER
@@ -91,9 +85,9 @@ spec:
               name: api-secrets
               key: postmark_api_token
         - name: RACK_ENV
-          value: production
+          value: development
         - name: RAILS_ENV
-          value: production
+          value: development
         - name: RAILS_LOG_TO_STDOUT
           value: enabled
         - name: RAILS_SERVE_STATIC_FILES
@@ -159,7 +153,7 @@ spec:
               name: api-secrets
               key: aws_access_key_id
         - name: AWS_ARCHIVE_BUCKET
-          value: edgi-wm-archive-staging
+          value: edgi-wm-archive-testing
         - name: AWS_REGION
           value: us-west-2
         - name: AWS_SECRET_ACCESS_KEY
@@ -168,16 +162,13 @@ spec:
               name: api-secrets
               key: aws_secret_access_key
         - name: AWS_WORKING_BUCKET
-          value: edgi-wm-db-internal-staging
+          value: edgi-wm-db-internal-testing
         - name: DATABASE_RDS
           value: "postgres://wm_dev_user:wm_dev_password@rds:5432/web_monitoring_dev"
         - name: DIFFER_DEFAULT
           value: http://diffing:80
         - name: HOST_URL
-          valueFrom:
-            secretKeyRef:
-              name: api-secrets
-              key: host_url
+          value: http://api
         - name: LANG
           value: en_US.UTF-8
         - name: MAIL_SENDER
@@ -244,6 +235,62 @@ spec:
         - name: POSTGRES_PASSWORD
           value: "wm_dev_password"
 ---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis-master
+  namespace: development
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: master
+        tier: backend
+    spec:
+      containers:
+      - name: master
+        image: gcr.io/google_containers/redis:e2e  # or just image: redis
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 6379
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: redis-slave
+  namespace: development
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+        role: slave
+        tier: backend
+    spec:
+      containers:
+      - name: slave
+        image: gcr.io/google_samples/gb-redisslave:v1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        env:
+        - name: GET_HOSTS_FROM
+          value: dns
+          # If your cluster config does not include a dns service, then to
+          # instead access an environment variable to find the master
+          # service's host, comment out the 'value: dns' line above, and
+          # uncomment the line below:
+          # value: env
+        ports:
+        - containerPort: 6379
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -256,6 +303,7 @@ spec:
   - name: rds
     port: 5432
     targetPort: rails-server
+  type: NodePort
 ---
 apiVersion: v1
 kind: Service
@@ -272,4 +320,41 @@ spec:
   - name: http
     port: 80
     targetPort: rails-server
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-master
+  namespace: development
+  labels:
+    app: redis
+    role: master
+    tier: backend
+spec:
+  ports:
+  - port: 6379
+    targetPort: 6379
+  selector:
+    app: redis
+    role: master
+    tier: backend
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-slave
+  namespace: development
+  labels:
+    app: redis
+    role: slave
+    tier: backend
+spec:
+  ports:
+  - port: 6379
+  selector:
+    app: redis
+    role: slave
+    tier: backend
   type: NodePort
