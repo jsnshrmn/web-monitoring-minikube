@@ -302,7 +302,7 @@ spec:
   ports:
   - name: rds
     port: 5432
-    targetPort: rails-server
+    targetPort: rds
   type: NodePort
 ---
 apiVersion: v1
