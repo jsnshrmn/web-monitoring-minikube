@@ -35,6 +35,22 @@ spec:
             port: 80
           initialDelaySeconds: 5
           periodSeconds: 10
+        env:
+        - name: SENTRY_DSN
+          valueFrom:
+            secretKeyRef:
+              name: processing-secrets
+              key: sentry_dsn
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: WEB_MONITORING_DB_URL
+          value: "http://$(MY_POD_IP):30000/"
+        - name: WEB_MONITORING_DB_EMAIL
+          value: seed-admin@example.com
+        - name: WEB_MONITORING_DB_PASSWORD
+          value: PASSWORD
 ---
 apiVersion: v1
 kind: Service
@@ -49,4 +65,5 @@ spec:
     protocol: TCP
     port: 4000 
     targetPort: diffing
+    nodePort: 30004
   type: NodePort
