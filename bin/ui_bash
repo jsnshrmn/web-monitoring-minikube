@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+source bin/activate
+
+app=ui
+pod=$(kubectl get pods --selector=app=${app} --output=jsonpath={.items..metadata.name})
+
+# in case of git bash https://stackoverflow.com/a/21907301
+if stat /git-bash.exe >/dev/null
+then
+    kubectl exec -it ${pod} //bin//bash
+else
+    kubectl exec -it ${pod} /bin/bash
+fi
