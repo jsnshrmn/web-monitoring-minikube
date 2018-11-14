@@ -14,4 +14,4 @@ fi
 
 kubectl config set-context $(kubectl config current-context) --namespace=$NAMESPACE
 
-eval $(minikube docker-env)
+eval $(minikube docker-env --shell bash)
