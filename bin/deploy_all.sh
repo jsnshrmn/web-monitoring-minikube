@@ -2,6 +2,9 @@
 
 source bin/activate
 
+kubectl delete --all secrets
+kubectl delete --all all
+
 kubectl apply -f secrets/
 
 cd processing
@@ -16,4 +19,13 @@ cd ..
 
 kubectl apply -f templates/
 
+api_status='kubectl get pods --selector=app=api --output=jsonpath={.items..status.phase}'
+rds_status='kubectl get pods --selector=app=rds --output=jsonpath={.items..status.phase}'
+
+until echo $(${api_status}) = "Running" && echo $(${rds_status}) = "Running"
+do
+    sleep 1
+done
+
+sleep 30
 source bin/db_setup.sh
