@@ -15,3 +15,5 @@ docker build --target import-worker -t envirodgi/db-import-worker .
 cd ..
 
 kubectl apply -f templates/
+
+source bin/db_setup.sh
