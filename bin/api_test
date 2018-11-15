@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+source bin/activate
+app=api
+
+pod=$(kubectl get pods --selector=app=${app} --output=jsonpath={.items..metadata.name})
+
+kubectl exec -it ${pod} rails test
