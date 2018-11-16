@@ -8,14 +8,24 @@ fi
 
 source bin/activate
 
-# Delete processing pods and secrets
+# Attempt to delete dangling images. If a dangling image is in use, delete the offending containers.
+killfail=$(minikube ssh 'docker rmi --force $(docker images -f "dangling=true" -q)'| grep 'image is being used by running container')
+if [ "${killfail}" ]
+then
+    echo ${killfail}
+    killme=${killfail##* }
+    minikube ssh "docker rm --force ${killme}" && Deleted running container ${killme}.
+    minikube ssh 'docker rmi --force $(docker images -f "dangling=true" -q)'
+fi
+
 if [ "$set" == "all" ] || [ "$set" == "processing" ]
 then
+    # Delete processing pods, secrets, and service
     kubectl delete secrets/processing-secrets
     kubectl delete deployment.apps/diffing
     kubectl delete service/diffing
 
-    # Delete envirodg images from the local registry
+    # Delete envirodgi processing images from the local registry
     minikube ssh 'docker rmi --force envirodgi/processing'
 
     # Build processing
@@ -24,14 +34,14 @@ then
     cd ..
 fi
 
-# Delete ui pods and secrets
 if [ "$set" == "all" ] || [ "$set" == "ui" ]
 then
+    # Delete ui pods, secrets, and service
     kubectl delete secrets/ui-secrets
     kubectl delete deployment.apps/ui
     kubectl delete service/ui
 
-    # Delete envirodg images from the local registry
+    # Delete envirodgi ui images from the local registry
     minikube ssh 'docker rmi --force envirodgi/ui'
 
     # Build ui
@@ -44,17 +54,18 @@ then
     cd ..
 fi
 
-# Delete db pods and secrets
 if [ "$set" == "all" ] || [ "$set" == "db" ]
 then
+    # Delete db pods, secrets, and service
     kubectl delete secrets/api-secrets
     kubectl delete deployment.apps/api
     kubectl delete service/api
 
+    # Delete postgres database pod and service.
     kubectl delete deployment.apps/rds
     kubectl delete service/rds
 
-    # Delete envirodg images from the local registry
+    # Delete envirodgi api images from the local registry
     minikube ssh 'docker rmi --force envirodgi/db-rails-server'
     minikube ssh 'docker rmi --force envirodgi/db-import-worker'
 
