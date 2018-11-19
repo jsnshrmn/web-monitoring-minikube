@@ -14,7 +14,7 @@ if [ "${killfail}" ]
 then
     echo ${killfail}
     killme=${killfail##* }
-    minikube ssh "docker rm --force ${killme}" && Deleted running container ${killme}.
+    minikube ssh "docker rm --force ${killme}" && echo "Deleted running container ${killme}."
     minikube ssh 'docker rmi --force $(docker images -f "dangling=true" -q)'
 fi
 
