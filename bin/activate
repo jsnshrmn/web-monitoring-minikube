@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
 export HOSTED_ZONE=minikube
 export NAMESPACE=development
+
+if !(minikube config get vm-driver >/dev/null)
+then
+ echo "Please configure vm driver, eg 'minikube config set vm-driver \$driver'"
+ return 1
+fi
+
+minikube_status=$(minikube status)
+if !(echo "$minikube_status" | grep "minikube: Running" && echo "$minikube_status" | grep "cluster: Running" && echo "$minikube_status" | grep "kubectl: Correctly Configured: pointing to minikube-vm")
+then
+    minikube delete; minikube start
+fi
+
 kubectl config set-cluster $HOSTED_ZONE
 
 # Create namespace if necessary.
