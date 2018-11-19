@@ -59,11 +59,14 @@ then
     # Delete db pods, secrets, and service
     kubectl delete secrets/api-secrets
     kubectl delete deployment.apps/api
+    kubectl delete deployment.apps/import-worker
     kubectl delete service/api
 
     # Delete postgres database pod and service.
     kubectl delete deployment.apps/rds
     kubectl delete service/rds
+    # Start recreating it immediately so it's up when we need it.
+    kubectl apply -f templates/rds.yaml
 
     # Delete envirodgi api images from the local registry
     minikube ssh 'docker rmi --force envirodgi/db-rails-server'

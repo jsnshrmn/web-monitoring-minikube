@@ -1,0 +1,39 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rds
+  namespace: development
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: rds
+    spec:
+      containers:
+      - name: rds
+        image: library/postgres:10
+        imagePullPolicy: Always
+        ports:
+        - name: rds
+          containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: "wm_dev_user"
+        - name: POSTGRES_PASSWORD
+          value: "wm_dev_password"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rds
+  namespace: development
+spec:
+  selector:
+    app: rds
+  ports:
+  - name: rds
+    port: 5432
+    targetPort: rds
+  type: NodePort
