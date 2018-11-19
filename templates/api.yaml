@@ -44,10 +44,7 @@ spec:
         - name: ALLOWED_ARCHIVE_HOSTS
           value: "https://edgi-wm-versionista.s3.amazonaws.com/ https://edgi-wm-versionista.s3-us-west-2.amazonaws.com/ https://s3-us-west-2.amazonaws.com/edgi-wm-versionista/ https://edgi-versionista-archive.s3.amazonaws.com/ https://edgi-versionista-archive.s3.amazonaws.com/edgi-versionista-archive/"
         - name: AUTO_ANNOTATION_USER
-          valueFrom:
-            secretKeyRef:
-              name: api-secrets
-              key: auto_annotation_user
+          value: "annotation-bot@example.com"
         - name: DATABASE_URL
           value: "postgres://wm_dev_user:wm_dev_password@rds:5432/web_monitoring_dev"
         - name: DIFFER_DEFAULT
@@ -158,10 +155,7 @@ spec:
         # - name: ANALYSIS_REQUIRE_MEDIA_TYPE
         #   value: "true"
         - name: AUTO_ANNOTATION_USER
-          valueFrom:
-            secretKeyRef:
-              name: api-secrets
-              key: auto_annotation_user
+          value: "annotation-bot@example.com"
         - name: DATABASE_URL
           value: "postgres://wm_dev_user:wm_dev_password@rds:5432/web_monitoring_dev"
         - name: DIFFER_DEFAULT
