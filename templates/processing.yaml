@@ -51,6 +51,15 @@ spec:
           value: seed-admin@example.com
         - name: WEB_MONITORING_DB_PASSWORD
           value: PASSWORD
+        - name: WEB_MONITORING_APP_ENV
+          value: "development"
+        volumeMounts:
+        - mountPath: /app/tmp
+          name: api-tmp
+      volumes:
+      - name: api-tmp
+        persistentVolumeClaim:
+          claimName: api-tmp-claim
 ---
 apiVersion: v1
 kind: Service
