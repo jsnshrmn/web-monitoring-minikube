@@ -5,9 +5,11 @@ Install [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
 
 ## Start minikube.
 
+
 If you are using something other than virtualbox, specify the VM driver, like:
 
 ``minikube start --vm-driver hyperv``
+
 
 ## Activate your shell environment.
 
@@ -88,3 +90,9 @@ While building ui, you may find that the yarn install steps error out. Yarn seem
 time until docker build -t envirodgi/ui .; do echo "ERROR: build failed; retrying"; done
 ```
 
+Over the course of several redeploys to an existing minikube cluster, you may find that memory usage creeps up.
+If kubernetes begins to run out of memory, you can either configure plenty of memory before recreating the cluster, like:
+
+``minikube config set memory 4096``
+
+or just delete the cluster and start fresh.
