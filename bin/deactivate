@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
-eval $(minikube docker-env -u)
+eval $(minikube docker-env -u  --shell bash)
+
+minikube delete
