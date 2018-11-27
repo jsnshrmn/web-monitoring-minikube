@@ -163,7 +163,7 @@ spec:
           #value: "http://$(MY_POD_IP):30004"
           value: "http://diffing:4000"
         - name: HOST_URL
-          value: "http://$(MY_POD_IP):30000/"
+          value: "http://$(MY_POD_IP):30000"
         - name: LANG
           value: en_US.UTF-8
         - name: MAIL_SENDER
