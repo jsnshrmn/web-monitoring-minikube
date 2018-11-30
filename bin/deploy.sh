@@ -79,6 +79,25 @@ then
     cd ..
 fi
 
+if [ "$set" == "db-min" ]
+then
+    # Delete db pods, secrets, and service
+    kubectl delete secrets/api-secrets
+    kubectl delete deployment.apps/api
+    kubectl delete deployment.apps/import-worker
+    kubectl delete service/api
+
+    # Delete envirodgi api images from the local registry
+    minikube ssh 'docker rmi --force envirodgi/db-rails-server'
+    minikube ssh 'docker rmi --force envirodgi/db-import-worker'
+
+    # Build db
+    cd db
+    docker build --target rails-server -t envirodgi/db-rails-server .
+    docker build --target import-worker -t envirodgi/db-import-worker .
+    cd ..
+fi
+
 # Create secrets
 kubectl apply -f secrets/
 
