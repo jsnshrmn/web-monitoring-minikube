@@ -2,14 +2,15 @@
 export HOSTED_ZONE=minikube
 export NAMESPACE=development
 
-if !(minikube config get vm-driver >/dev/null)
+if ! minikube config get vm-driver >/dev/null
 then
  echo "Please configure vm driver, eg 'minikube config set vm-driver \$driver'"
  return 1
 fi
 
+minikube_vm_driver=$(minikube config get vm-driver)
 minikube_status=$(minikube status)
-if !(echo "$minikube_status" | grep "minikube: Running" && echo "$minikube_status" | grep "cluster: Running" && echo "$minikube_status" | grep "kubectl: Correctly Configured: pointing to minikube-vm")
+if ! echo "$minikube_status" | grep "minikube: Running" && echo "$minikube_status" | grep "cluster: Running" && echo "$minikube_status" | grep "kubectl: Correctly Configured: pointing to minikube-vm"
 then
     minikube delete; minikube start
 fi
@@ -24,7 +25,9 @@ else
     kubectl create namespace ${NAMESPACE}
 fi
 
-
 kubectl config set-context $(kubectl config current-context) --namespace=$NAMESPACE
 
-eval $(minikube docker-env --shell bash)
+if [ "$minikube_vm_driver" != "none" ]
+then
+    eval $(minikube docker-env --shell bash)
+fi
