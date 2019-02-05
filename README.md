@@ -1,6 +1,10 @@
+## Prerequisites
 
-Install [minikube](https://github.com/kubernetes/minikube) and start it.
-Install [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+- Install [minikube](https://github.com/kubernetes/minikube) and start it.
+- Install [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+- Clone this repo.
+- Initialize the submodules
+  -  `git submodule init && git submodule update`
 
 
 ## Start minikube.
